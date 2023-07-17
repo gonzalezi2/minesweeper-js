@@ -1,0 +1,8 @@
+{
+  "name": "minesweeper-js",
+  "version": "1.0.0",
+  "description": "A JavaScript only version of the classic minesweeper game",
+  "main": "index.js",
+  "author": "Ivan Gonzalez",
+  "license": "ISC"
+}
