@@ -1,0 +1,69 @@
+@font-face {
+    font-family: Digital;
+    src: url(assets/Digital7Mono-Yz9J4.ttf);
+}
+
+:root {
+    --padding: 12px;
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-dark: #3c3c3c;
+        --game-bg: #ccc;
+    }
+}
+
+main#root {
+    min-height: 50vh;
+}
+
+#game-container {
+    background-color: var(--accent-bg);
+    padding: var(--padding);
+}
+
+#game-container #header {
+    display: flex;
+    padding: var(--padding);
+    background-color: var(--bg);
+    justify-content: space-between;
+    align-items: center;
+}
+
+#game-container #game {
+    width: 100%;
+    height: 600px;
+    margin-top: var(--padding);
+    background-color: var(--bg);
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#game-container #game .block {
+    width: calc(100%  / 9);
+    height: calc(100% / 9);
+    background-color: var(--bg);
+    /* box-shadow: inset 5px 5px 1px #282828, inset -5px -5px 1px #171717; */
+  border: 5px solid #282828;
+  border-left-color: #191919;
+  border-top-color: #191919;
+}
+
+#game-container #header #mines, #game-container #header #score{
+    font-size: 60px;
+    font-family: 'Digital', monospace;
+    position: relative;
+    opacity: 0.95;
+}
+
+
+#game-container #header #mines:before, #game-container #header #score:before {
+    content: '888';
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: var(--text-dark);
+    z-index: -1;
+}
