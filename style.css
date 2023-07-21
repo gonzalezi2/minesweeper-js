@@ -5,65 +5,113 @@
 
 :root {
     --padding: 12px;
+    --border-color-dark: #999;
+    --border-color-light: #fff;
+    --game-bg: #c6c6c6;
+    --game-bg-alt: #c0c0c0;
+    --text-alt: #9e9d9d;
+    --standard-border-radius: 0;
 }
 
 /* Dark theme */
 @media (prefers-color-scheme: dark) {
     :root {
-        --text-dark: #3c3c3c;
+        --text-alt: #3c3c3c;
         --game-bg: #ccc;
+        --text: #ececec;
+        --border-color-light: #191919;
+        --border-color-dark: #282828;
     }
 }
 
 main#root {
+    display: grid;
     min-height: 50vh;
 }
 
 #game-container {
-    background-color: var(--accent-bg);
+    background-color: var(--game-bg);
     padding: var(--padding);
+    width: fit-content;
+    margin: 0 auto;
+    border: 6px solid var(--border-color-dark);
+    border-left-color: var(--border-color-light);
+    border-top-color: var(--border-color-light);
 }
 
 #game-container #header {
     display: flex;
     padding: var(--padding);
-    background-color: var(--bg);
+    background-color: var(--game-bg-alt);
     justify-content: space-between;
     align-items: center;
+    border: 6px solid var(--border-color-light);
+    border-left-color: var(--border-color-dark);
+    border-top-color: var(--border-color-dark);
+}
+
+#game-container #reset {
+    font-size: 40px;
+    line-height: 40px;
+    padding: 5px;
+    background-color: var(--game-bg);
+    border: 4px solid var(--border-color-dark);
+    border-left-color: var(--border-color-light);
+    border-top-color: var(--border-color-light);
+}
+#game-container #reset:hover {
+    background-color: var(--game-bg-alt);
+    filter: none;
+}
+#game-container #reset:active {
+    font-size: 35px;
+    padding: 5px 7.5px;
+    background-color: var(--game-bg-alt);
+    border: 4px solid var(--border-color-dark);
 }
 
 #game-container #game {
-    width: 100%;
-    height: 600px;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
     margin-top: var(--padding);
     background-color: var(--bg);
-    display: flex;
-    flex-wrap: wrap;
+    border: 6px solid var(--border-color-light);
+    border-left-color: var(--border-color-dark);
+    border-top-color: var(--border-color-dark);
 }
+
+/* #game-container, #game-container #header, #game-container #game  */
 
 #game-container #game .block {
-    width: calc(100%  / 9);
-    height: calc(100% / 9);
-    background-color: var(--bg);
-    /* box-shadow: inset 5px 5px 1px #282828, inset -5px -5px 1px #171717; */
-  border: 5px solid #282828;
-  border-left-color: #191919;
-  border-top-color: #191919;
+    width: 35px;
+    height: 35px;
+    background-color: var(--game-bg);
+    border: 4px solid var(--border-color-dark);
+    border-left-color: var(--border-color-light);
+    border-top-color: var(--border-color-light);
 }
 
-#game-container #header #mines, #game-container #header #score{
+#game-container #game .block:active {
+    border: 0;
+}
+
+#game-container #header #flags, #game-container #header #timer{
     font-size: 60px;
+    line-height: 45px;
     font-family: 'Digital', monospace;
     position: relative;
     opacity: 0.95;
+    border: 3px solid var(--border-color-light);
+    border-left-color: var(--border-color-dark);
+    border-top-color: var(--border-color-dark);
 }
 
 
-#game-container #header #mines:before, #game-container #header #score:before {
+#game-container #header #flags:before, #game-container #header #timer:before {
     content: '888';
     position: absolute;
     top: 0;
     left: 0;
-    color: var(--text-dark);
+    color: var(--text-alt);
     z-index: -1;
 }
