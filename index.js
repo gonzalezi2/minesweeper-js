@@ -5,6 +5,7 @@ const gameGrid = document.getElementById('game');
 const timer = document.getElementById('timer');
 const flags = document.getElementById('flags');
 const resetBtn = document.getElementById('reset');
+let interval;
 
 // Constants
 const difficulty = 'easy';
@@ -40,13 +41,21 @@ function getRandomGridLocations() {
 
 // Function for clicking on a block
 function blockClickHandler(e) {
-  if (e.target.classList.contains('block')) {
+  if (e?.target.classList.contains('block')) {
     e.target.classList.add('clicked');
+  }
+  if (timer.innerText === '000') {
+    let jsCounter = 0;
+    interval = setInterval(() => {
+      jsCounter += 1;
+      timer.innerText = `${jsCounter.toString().padStart(3, '0')}`;
+    }, 1000);
   }
 }
 
 // Function to reset the game to a clean state
 function resetGameHandler(e) {
+  clearInterval(interval);
   timer.innerText = '000';
   flags.innerText = `0${minesAndFlags}`;
 }

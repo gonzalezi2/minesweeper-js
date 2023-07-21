@@ -17,10 +17,11 @@
 @media (prefers-color-scheme: dark) {
     :root {
         --text-alt: #3c3c3c;
-        --game-bg: #ccc;
+        --game-bg: #212121;
+        --game-bg-alt: #212121;
         --text: #ececec;
-        --border-color-light: #191919;
-        --border-color-dark: #282828;
+        --border-color-light: #3d3d3d;
+        --border-color-dark: #0e0e0e;
     }
 }
 
@@ -91,8 +92,8 @@ main#root {
     border-top-color: var(--border-color-light);
 }
 
-#game-container #game .block:active {
-    border: 0;
+#game-container #game .block:active, #game-container #game .block.clicked {
+    border-width: 1px;
 }
 
 #game-container #header #flags, #game-container #header #timer{
