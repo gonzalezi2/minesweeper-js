@@ -17,7 +17,7 @@ const gameMatrixSize = {
     cols: 9,
   },
 };
-const minesAndFlags = 10;
+let minesAndFlags = 10;
 const gameMatrix = Array(gameMatrixSize[difficulty].rows)
   .fill()
   .map(() => Array(gameMatrixSize[difficulty].cols).fill());
@@ -25,6 +25,7 @@ const gameMatrix = Array(gameMatrixSize[difficulty].rows)
 // Event listeners
 resetBtn.addEventListener('click', resetGameHandler);
 gameGrid.addEventListener('click', blockClickHandler);
+gameGrid.addEventListener('contextmenu', rightClickHandler);
 
 let mineLocations = [];
 
@@ -41,11 +42,27 @@ function getRandomGridLocations() {
   return `${randomRow}${randomCol}`;
 }
 
+function rightClickHandler(e) {
+  e.preventDefault();
+
+  e.target.classList.toggle('flagged');
+  if (e.target.innerText === '') {
+    minesAndFlags -= 1;
+    flags.innerText = `${minesAndFlags.toString().padStart(3, '0')}`;
+  }
+}
+
 // Function for clicking on a block
 function blockClickHandler(e) {
+  if (e?.target.classList.contains('flagged')) {
+    return;
+  }
+
   if (e?.target.classList.contains('block')) {
     e.target.classList.add('clicked');
   }
+
+  e.target.classList.add('clicked');
   if (isGameStart === false) {
     isGameStart = true;
     interval = setInterval(() => {
@@ -59,10 +76,11 @@ function blockClickHandler(e) {
 function resetGameHandler() {
   clearInterval(interval);
   counter = 0;
+  minesAndFlags = 0;
   isGameStart = false;
   interval = undefined;
   timer.innerText = '000';
-  flags.innerText = `0${minesAndFlags}`;
+  flags.innerText = `${minesAndFlags.toString().padStart(3, '0')}`;
 }
 
 // Recursive function to clear all the empty areas that are adjacent to the selected empty block
