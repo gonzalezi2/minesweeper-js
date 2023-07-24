@@ -45,11 +45,14 @@ function getRandomGridLocations() {
 function rightClickHandler(e) {
   e.preventDefault();
 
-  e.target.classList.toggle('flagged');
-  if (e.target.innerText === '') {
+  if (e.target.classList.contains('flagged')) {
+    minesAndFlags += 1;
+  } else {
     minesAndFlags -= 1;
-    flags.innerText = `${minesAndFlags.toString().padStart(3, '0')}`;
   }
+
+  flags.innerText = `${minesAndFlags.toString().padStart(3, '0')}`;
+  e.target.classList.toggle('flagged');
 }
 
 // Function for clicking on a block
