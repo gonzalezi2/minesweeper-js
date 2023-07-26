@@ -28,13 +28,6 @@ const gameMatrix = Array(gameMatrixSize[difficulty].rows)
 
 const numOfGameBlocks = gameMatrixSize[difficulty].rows * gameMatrixSize[difficulty].cols;
 
-/**
- * Event listeners
- */
-resetBtn.addEventListener('click', resetGameHandler);
-gameGrid.addEventListener('click', blockClickHandler);
-gameGrid.addEventListener('contextmenu', rightClickHandler);
-
 let mineLocations = [];
 
 while (mineLocations.length < numOfGuessesLeft) {
@@ -44,18 +37,35 @@ while (mineLocations.length < numOfGuessesLeft) {
   }
 }
 
+function init() {
+  resetBtn.innerHTML = '&#128578';
+  timer.innerText = '000';
+  flags.innerText = `${numOfGuessesLeft.toString().padStart(3, '0')}`;
+  createGameBlocks();
+  /**
+   * Event listeners
+   */
+  resetBtn.addEventListener('click', resetGameHandler);
+  gameGrid.addEventListener('click', blockClickHandler);
+  gameGrid.addEventListener('contextmenu', rightClickHandler);
+}
+
 function getRandomGridLocations() {
-  const randomRow = Math.floor(Math.random() * 10);
-  const randomCol = Math.floor(Math.random() * 10);
-  return `${randomRow}${randomCol}`;
+  const randomRow = Math.floor(Math.random() * gameMatrixSize[difficulty].rows);
+  const randomCol = Math.floor(Math.random() * gameMatrixSize[difficulty].cols);
+  return `${randomRow},${randomCol}`;
 }
 
 function createGameBlocks() {
   gameGrid.innerHTML = '';
-  for (let i = 0; i < numOfGameBlocks; i += 1) {
-    const newBlock = document.createElement('div');
-    newBlock.classList.add('block');
-    gameGrid.append(newBlock);
+  for (let i = 0; i < gameMatrixSize[difficulty].rows; i += 1) {
+    for (let j = 0; j < gameMatrixSize[difficulty].cols; j += 1) {
+      const newBlock = document.createElement('div');
+      newBlock.classList.add('block');
+      newBlock.dataset.row = i;
+      newBlock.dataset.col = j;
+      gameGrid.append(newBlock);
+    }
   }
 }
 
@@ -78,15 +88,22 @@ function rightClickHandler(e) {
 
 // Function for clicking on a block
 function blockClickHandler(e) {
-  if (e?.target.classList.contains('flagged')) {
+  if (e.target.classList.contains('flagged') || !e.target.classList.contains('block')) {
     return;
   }
 
-  if (e?.target.classList.contains('block')) {
-    e.target.classList.add('clicked');
+  e.target.classList.add('clicked');
+
+  const targetRow = e.target.dataset.row;
+  const targetCol = e.target.dataset.col;
+  const blockCoords = `${targetRow},${targetCol}`;
+
+  if (mineLocations.includes(blockCoords)) {
+    e.target.classList.add('bomb');
+    endGame();
   }
 
-  e.target.classList.add('clicked');
+  // Start timer
   if (isGameStart === false) {
     isGameStart = true;
     interval = setInterval(() => {
@@ -103,12 +120,20 @@ function resetGameHandler() {
   numOfGuessesLeft = 0;
   isGameStart = false;
   interval = undefined;
-  timer.innerText = '000';
-  flags.innerText = `${numOfGuessesLeft.toString().padStart(3, '0')}`;
-  createGameBlocks();
+
+  init();
 }
 
-createGameBlocks();
+function endGame() {
+  resetBtn.innerHTML = '&#128565';
+
+  gameGrid.removeEventListener('click', blockClickHandler);
+  gameGrid.removeEventListener('contextmenu', rightClickHandler);
+
+  clearInterval(interval);
+}
+
+init();
 
 // Recursive function to clear all the empty areas that are adjacent to the selected empty block
 // function clearAdjacentEmptyAreaas()

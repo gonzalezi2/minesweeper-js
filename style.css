@@ -99,10 +99,19 @@ main#root {
     border-width: 1px;
 }
 
+#game-container #game .block.bomb:before, #game-container #game .block.flagged:before {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+}
+
 #game-container #game .block.flagged:before {
     content: '\1F4CD';
-    text-align: center;
-    display: block;
+}
+
+#game-container #game .block.bomb:before {
+    content: '\1F4A3';
 }
 
 #game-container #header #flags, #game-container #header #timer{
