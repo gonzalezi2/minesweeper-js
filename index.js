@@ -5,7 +5,7 @@
  */
 const gameGrid = document.getElementById('game');
 const timerElement = document.getElementById('timer');
-const flags = document.getElementById('flags');
+const mineCountElement = document.getElementById('flags');
 const resetBtn = document.getElementById('reset');
 let isGameStart = false;
 let interval;
@@ -21,7 +21,7 @@ const gameMatrixSize = {
   },
 };
 let counter = 0;
-let numOfGuessesLeft = 10;
+let mineCount = 10;
 const gameMatrix = Array(gameMatrixSize[difficulty].rows)
   .fill()
   .map(() => Array(gameMatrixSize[difficulty].cols).fill());
@@ -30,7 +30,7 @@ const numOfGameBlocks = gameMatrixSize[difficulty].rows * gameMatrixSize[difficu
 
 let mineLocations = [];
 
-while (mineLocations.length < numOfGuessesLeft) {
+while (mineLocations.length < mineCount) {
   let randomGridLocation = getRandomGridLocations();
   if (mineLocations.indexOf(randomGridLocation) < 0) {
     mineLocations.push(randomGridLocation);
@@ -40,7 +40,7 @@ while (mineLocations.length < numOfGuessesLeft) {
 function init() {
   resetBtn.innerHTML = '&#128578';
   timer.innerText = '000';
-  flags.innerText = `${numOfGuessesLeft.toString().padStart(3, '0')}`;
+  mineCountElement.innerText = `${mineCount.toString().padStart(3, '0')}`;
   createGameBlocks();
   /**
    * Event listeners
@@ -77,12 +77,12 @@ function rightClickHandler(e) {
   }
 
   if (e.target.classList.contains('flagged')) {
-    numOfGuessesLeft += 1;
+    mineCount += 1;
   } else {
-    numOfGuessesLeft -= 1;
+    mineCount -= 1;
   }
 
-  flags.innerText = `${numOfGuessesLeft.toString().padStart(3, '0')}`;
+  mineCountElement.innerText = `${mineCount.toString().padStart(3, '0')}`;
   e.target.classList.toggle('flagged');
 }
 
@@ -117,7 +117,7 @@ function blockClickHandler(e) {
 function resetGameHandler() {
   clearInterval(interval);
   counter = 0;
-  numOfGuessesLeft = 0;
+  mineCount = 0;
   isGameStart = false;
   interval = undefined;
 
