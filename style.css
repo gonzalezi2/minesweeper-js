@@ -32,6 +32,18 @@ main#root {
     min-height: 50vh;
 }
 
+#difficulty-selection {
+    display: flex;
+    justify-content: center;
+}
+
+#difficulty-selection button {
+    padding: 0;
+    background-color: transparent;
+    margin: 10px 5px;
+    color: var(--accent);
+}
+
 #game-container {
     background-color: var(--game-bg);
     padding: var(--padding);
@@ -75,12 +87,21 @@ main#root {
 
 #game-container #game {
     display: grid;
-    grid-template-columns: repeat(9, 1fr);
     margin-top: var(--padding);
     background-color: var(--bg);
     border: 6px solid var(--border-color-light);
     border-left-color: var(--border-color-dark);
     border-top-color: var(--border-color-dark);
+}
+
+#game-container #game.beginner {
+    grid-template-columns: repeat(9, 1fr);
+}
+#game-container #game.intermediate {
+    grid-template-columns: repeat(16, 1fr);
+}
+#game-container #game.advanced {
+    grid-template-columns: repeat(40, 1fr);
 }
 
 /* #game-container, #game-container #header, #game-container #game  */

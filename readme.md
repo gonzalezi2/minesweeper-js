@@ -10,3 +10,5 @@ A remake of the classic game found on Microsoft PCs in the 90s and 2000s, but wi
 - In order to figure out where the mines are, you can use the numbered blocks as hints as they indicate exactly how many mines are adjacent to it.
 - You can right click on a block in order to flag it if you think it contains a mine, after which the block will be disabled
 - In order to win the game, you must find all of the non-mine blocks
+
+[Wikipedia](<https://en.wikipedia.org/wiki/Minesweeper_(video_game)>)
