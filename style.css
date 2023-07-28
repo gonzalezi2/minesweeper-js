@@ -27,9 +27,28 @@
     }
 }
 
+body {
+    grid-template-columns: none;
+    grid-template-rows: auto;
+}
+
+body > * {
+    grid-column: unset;
+}
+
+body > header {
+    grid-column: unset;
+    grid-row: 1;
+}
+
 main#root {
     display: grid;
     min-height: 50vh;
+    grid-row: 2;
+}
+
+main#root footer {
+    grid-row: 3;
 }
 
 #difficulty-selection {
