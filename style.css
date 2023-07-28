@@ -36,19 +36,20 @@ body > * {
     grid-column: unset;
 }
 
+body > main#root {
+    min-height: 50vh;
+    grid-row: 2;
+    padding-bottom: 1.5rem;
+}
+
 body > header {
     grid-column: unset;
     grid-row: 1;
 }
 
-main#root {
-    display: grid;
-    min-height: 50vh;
-    grid-row: 2;
-}
-
-main#root footer {
+body > footer {
     grid-row: 3;
+    margin-top: 0;
 }
 
 #difficulty-selection {
