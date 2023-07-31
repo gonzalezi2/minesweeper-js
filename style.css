@@ -55,6 +55,19 @@ body > footer {
     padding: 2rem 0;
 }
 
+dialog {
+    padding: 2rem;
+    background-color: var(--game-bg);
+    border: 4px solid var(--border-color-dark);
+    border-left-color: var(--border-color-light);
+    border-top-color: var(--border-color-light);
+    text-align: center;
+}
+
+dialog button {
+    width: 100%;
+}
+
 #difficulty-selection {
     display: flex;
     justify-content: center;

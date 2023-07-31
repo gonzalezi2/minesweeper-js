@@ -12,6 +12,10 @@ const MinesweeperJS = (function () {
   const dialog = document.getElementById('game-over-dialog');
   const finalScoreElement = document.getElementById('final-score');
 
+  // used for opening and styling the dialog without having to play
+  // const openModalButton = document.getElementById('show-dialog');
+  // openModalButton.addEventListener('click', () => dialog.showModal());
+
   /**
    * Game variables
    */
