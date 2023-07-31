@@ -134,6 +134,9 @@ body > footer {
     border-left-color: var(--border-color-light);
     border-top-color: var(--border-color-light);
     user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #game-container #game .block.clicked {

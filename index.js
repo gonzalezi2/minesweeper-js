@@ -9,13 +9,15 @@ const MinesweeperJS = (function () {
   const mineCountElement = document.getElementById('flags');
   const resetBtn = document.getElementById('reset');
   const difficultySelectionBtns = document.getElementsByClassName('difficulty');
-  let isGameStart = false;
-  let interval;
+  const dialog = document.getElementById('game-over-dialog');
+  const finalScoreElement = document.getElementById('final-score');
 
   /**
    * Game variables
    */
   let difficulty = 'beginner';
+  let isGameStart = false;
+  let interval;
   const gameSettings = {
     beginner: {
       rows: 9,
@@ -37,6 +39,9 @@ const MinesweeperJS = (function () {
   let mineCount;
   let mineLocations = [];
 
+  //variable to store all blocks surrounding mines in order to get counts
+  let numberedBlocksHash = {};
+
   // const gameMatrix = Array(gameSettings[difficulty].rows)
   //   .fill()
   //   .map(() => Array(gameSettings[difficulty].cols).fill());
@@ -50,12 +55,25 @@ const MinesweeperJS = (function () {
     mineCountElement.innerText = `${mineCount.toString().padStart(3, '0')}`;
     createGameBlocks();
 
-    while (mineLocations.length < mineCount) {
+    for (let i = 0; i < mineCount; i += 1) {
       let randomGridLocation = getRandomGridLocations();
       if (mineLocations.indexOf(randomGridLocation) < 0) {
         mineLocations.push(randomGridLocation);
       }
     }
+
+    // For each mine in the list, get all surrounding blocks, keep track of them in order to count how many mines surround them, and then update the ui with the correct numbers
+    mineLocations.forEach((mine) => {
+      const numberBlocksStack = getAllBlocksSurroundingMine(mine);
+
+      numberBlocksStack.forEach((coord) => {
+        if (coord in numberedBlocksHash) {
+          numberedBlocksHash[coord] += 1;
+        } else {
+          numberedBlocksHash[coord] = 1;
+        }
+      });
+    });
 
     gameGrid.className = difficulty;
     /**
@@ -86,6 +104,30 @@ const MinesweeperJS = (function () {
         gameGrid.append(newBlock);
       }
     }
+  }
+
+  function getAllBlocksSurroundingMine(mine) {
+    // get the row and col of the current mine
+    const [row, col] = mine.split(',').map((stringNum) => Number(stringNum));
+    // get block coordinates of all surrounding blocks
+    const surroundingBlocks = [];
+    // iterate through the row before and after
+    // the rows/cols are counted starting at 1 instead of 0 so we must subtract 1
+    const startingRow = Math.max(0, row - 1);
+    const endingRow = Math.min(row + 1, gameSettings[difficulty].rows - 1);
+    const startingCol = Math.max(0, col - 1);
+    const endingCol = Math.min(col + 1, gameSettings[difficulty].cols - 1);
+
+    for (let i = startingRow; i <= endingRow; i++) {
+      // iterate through the column before and after
+      for (let j = startingCol; j <= endingCol; j++) {
+        if (i === row && j === col) {
+          continue;
+        }
+        surroundingBlocks.push(`${i},${j}`);
+      }
+    }
+    return surroundingBlocks;
   }
 
   function selectDifficulty(e) {
@@ -128,10 +170,21 @@ const MinesweeperJS = (function () {
       return;
     }
 
+    if (blockCoords in numberedBlocksHash) {
+      e.target.innerText = numberedBlocksHash[blockCoords];
+      delete numberedBlocksHash[blockCoords];
+    }
+
+    // TODO: swtich to requestAnimationFrame
     // Start timer
     if (isGameStart === false) {
       isGameStart = true;
       interval = setInterval(() => {
+        if (Object.keys(numberedBlocksHash).length === 0) {
+          clearInterval(interval);
+          finalScoreElement.innerText = counter;
+          dialog.showModal();
+        }
         counter += 1;
         timerElement.innerText = `${counter.toString().padStart(3, '0')}`;
       }, 1000);
@@ -145,6 +198,7 @@ const MinesweeperJS = (function () {
     mineCount = gameSettings[difficulty].mineCount;
     isGameStart = false;
     mineLocations = [];
+    numberedBlocksHash = {};
 
     init();
   }
