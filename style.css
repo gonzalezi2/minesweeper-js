@@ -137,7 +137,7 @@ dialog button {
     grid-template-columns: repeat(16, 1fr);
 }
 #game-container #game.advanced {
-    grid-template-columns: repeat(40, 1fr);
+    grid-template-columns: repeat(30, 1fr);
 }
 
 /* #game-container, #game-container #header, #game-container #game  */

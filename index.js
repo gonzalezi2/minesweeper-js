@@ -34,8 +34,8 @@ const MinesweeperJS = (function () {
       mineCount: 40,
     },
     advanced: {
-      rows: 30,
-      cols: 16,
+      rows: 16,
+      cols: 30,
       mineCount: 99,
     },
   };
@@ -75,9 +75,8 @@ const MinesweeperJS = (function () {
     mineLocations.forEach((mine) => {
       const numberBlocksStack = getAllNeighboringBlocks(mine);
 
-      const blockElement = document.querySelector(`div.block[data-coords="${mine}"]`);
-      // console.log(blockElement.style);
-      blockElement.style.backgroundColor = 'red';
+      // const blockElement = document.querySelector(`div.block[data-coords="${mine}"]`);
+      // blockElement.style.backgroundColor = 'red';
 
       numberBlocksStack.forEach((coord) => {
         if (mineLocations.includes(coord)) {
@@ -86,9 +85,6 @@ const MinesweeperJS = (function () {
         if (coord in numberedBlocksHash) {
           numberedBlocksHash[coord] += 1;
         } else {
-          if (mine === coord) {
-            console.log('oops');
-          }
           numberedBlocksHash[coord] = 1;
           allBlocksHash[coord] = ['numBlock', false];
         }
@@ -176,11 +172,6 @@ const MinesweeperJS = (function () {
     allBlocksHash[blockCoords][1] = true;
     target.innerText = numberedBlocksHash[blockCoords];
     delete numberedBlocksHash[blockCoords];
-    if (Object.keys(numberedBlocksHash).length < 10) {
-      console.log(numberedBlocksHash);
-    } else {
-      console.log(Object.keys(numberedBlocksHash).length);
-    }
   }
 
   // Function for clicking on a block
@@ -228,15 +219,18 @@ const MinesweeperJS = (function () {
     }
   }
 
-  function openNeighboringBlocks(currBlock, e) {
+  function openNeighboringBlocks(currBlock) {
     // get all neighboring blocks for the current block
     const currNeighbors = getAllNeighboringBlocks(currBlock);
-    console.log(currNeighbors);
     const nextNeighbors = [];
 
     currNeighbors.forEach((block) => {
       const blockCoords = block.split(',');
       const blockElement = document.querySelector(`div.block[data-coords="${blockCoords[0]},${blockCoords[1]}"]`);
+
+      if (blockElement.classList.contains('clicked')) {
+        return;
+      }
       // ignore any that are not empty
       if (block in allBlocksHash === false || allBlocksHash[block][1] === true) {
         allBlocksHash[block] = ['empty', true];
@@ -249,6 +243,10 @@ const MinesweeperJS = (function () {
         }
       }
     });
+
+    if (nextNeighbors.length > 0) {
+      nextNeighbors.forEach(openNeighboringBlocks);
+    }
   }
 
   // Function to reset the game to a clean state
