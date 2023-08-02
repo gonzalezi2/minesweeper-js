@@ -184,6 +184,8 @@ const MinesweeperJS = (function () {
       return;
     }
 
+    const startTime = new Date();
+
     e.target.classList.add('clicked');
 
     const blockCoords = e.target.dataset.coords;
@@ -208,14 +210,15 @@ const MinesweeperJS = (function () {
     if (isGameStart === false) {
       isGameStart = true;
       interval = setInterval(() => {
+        const currTime = Date.now();
+        counter = (currTime - startTime) / 1000;
         if (Object.keys(numberedBlocksHash).length === 0) {
           clearInterval(interval);
-          finalScoreElement.innerText = counter;
+          finalScoreElement.innerText = counter.toFixed(3);
           dialog.showModal();
         }
-        counter += 1;
-        timerElement.innerText = `${counter.toString().padStart(3, '0')}`;
-      }, 1000);
+        timerElement.innerText = `${Number.parseInt(counter).toString().padStart(3, '0')}`;
+      }, 100);
     }
   }
 
