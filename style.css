@@ -159,7 +159,7 @@ dialog button {
     border-width: 1px;
 }
 
-#game-container #game .block.bomb:before, #game-container #game .block.flagged:before {
+#game-container #game .block.mine:before, #game-container #game .block.flagged:before {
     display: flex;
     align-items: center;
     height: 100%;
@@ -170,7 +170,7 @@ dialog button {
     content: '\1F4CD';
 }
 
-#game-container #game .block.bomb:before {
+#game-container #game .block.mine:before {
     content: '\1F4A3';
 }
 

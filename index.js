@@ -43,8 +43,12 @@ const MinesweeperJS = (function () {
   let mineCount;
   let mineLocations = [];
 
-  //variable to store all blocks surrounding mines in order to get counts
+  // hash to store all neightboring blocks surrounding mines in order to get counts
   let numberedBlocksHash = {};
+
+  // hash to store all neighboring blocks of empty spaces to recursively open all empty blocks
+  // type block = [blockType: string, isOpen: boolean];
+  let allBlocksHash = {};
 
   // const gameMatrix = Array(gameSettings[difficulty].rows)
   //   .fill()
@@ -59,6 +63,7 @@ const MinesweeperJS = (function () {
     mineCountElement.innerText = `${mineCount.toString().padStart(3, '0')}`;
     createGameBlocks();
 
+    // Add mines randomly with their locations on the grid
     for (let i = 0; i < mineCount; i += 1) {
       let randomGridLocation = getRandomGridLocations();
       if (mineLocations.indexOf(randomGridLocation) < 0) {
@@ -66,15 +71,26 @@ const MinesweeperJS = (function () {
       }
     }
 
-    // For each mine in the list, get all surrounding blocks, keep track of them in order to count how many mines surround them, and then update the ui with the correct numbers
+    // For each mine in the list, get all surrounding blocks, keep track of them in order to count how many mines surround them, and then update the ui with the correct numbers when clicked
     mineLocations.forEach((mine) => {
-      const numberBlocksStack = getAllBlocksSurroundingMine(mine);
+      const numberBlocksStack = getAllNeighboringBlocks(mine);
+
+      const blockElement = document.querySelector(`div.block[data-coords="${mine}"]`);
+      // console.log(blockElement.style);
+      blockElement.style.backgroundColor = 'red';
 
       numberBlocksStack.forEach((coord) => {
+        if (mineLocations.includes(coord)) {
+          return;
+        }
         if (coord in numberedBlocksHash) {
           numberedBlocksHash[coord] += 1;
         } else {
+          if (mine === coord) {
+            console.log('oops');
+          }
           numberedBlocksHash[coord] = 1;
+          allBlocksHash[coord] = ['numBlock', false];
         }
       });
     });
@@ -103,14 +119,13 @@ const MinesweeperJS = (function () {
       for (let j = 0; j < gameSettings[difficulty].cols; j += 1) {
         const newBlock = document.createElement('div');
         newBlock.classList.add('block');
-        newBlock.dataset.row = i;
-        newBlock.dataset.col = j;
+        newBlock.dataset.coords = `${i},${j}`;
         gameGrid.append(newBlock);
       }
     }
   }
 
-  function getAllBlocksSurroundingMine(mine) {
+  function getAllNeighboringBlocks(mine) {
     // get the row and col of the current mine
     const [row, col] = mine.split(',').map((stringNum) => Number(stringNum));
     // get block coordinates of all surrounding blocks
@@ -156,30 +171,48 @@ const MinesweeperJS = (function () {
     e.target.classList.toggle('flagged');
   }
 
+  function openCurrBlock(target, blockCoords) {
+    target.classList.add('clicked');
+    allBlocksHash[blockCoords][1] = true;
+    target.innerText = numberedBlocksHash[blockCoords];
+    delete numberedBlocksHash[blockCoords];
+    if (Object.keys(numberedBlocksHash).length < 10) {
+      console.log(numberedBlocksHash);
+    } else {
+      console.log(Object.keys(numberedBlocksHash).length);
+    }
+  }
+
   // Function for clicking on a block
   function blockClickHandler(e) {
-    if (e.target.classList.contains('flagged') || !e.target.classList.contains('block')) {
+    if (
+      e.target.classList.contains('flagged') ||
+      !e.target.classList.contains('block') ||
+      e.target.classList.contains('clicked')
+    ) {
       return;
     }
 
     e.target.classList.add('clicked');
 
-    const targetRow = e.target.dataset.row;
-    const targetCol = e.target.dataset.col;
-    const blockCoords = `${targetRow},${targetCol}`;
+    const blockCoords = e.target.dataset.coords;
 
+    // End the game if the current block contains a mine
     if (mineLocations.includes(blockCoords)) {
-      e.target.classList.add('bomb');
+      e.target.classList.add('mine');
       endGame();
       return;
     }
 
+    // show the correct number next to blocks neighboring mines
+    // otherwise, iterate over each empty block and open all unused neightbor blocks
     if (blockCoords in numberedBlocksHash) {
-      e.target.innerText = numberedBlocksHash[blockCoords];
-      delete numberedBlocksHash[blockCoords];
+      openCurrBlock(e.target, blockCoords);
+    } else {
+      openNeighboringBlocks(blockCoords, e);
     }
 
-    // TODO: swtich to requestAnimationFrame
+    // TODO: swtich to a more reliable timer
     // Start timer
     if (isGameStart === false) {
       isGameStart = true;
@@ -195,6 +228,29 @@ const MinesweeperJS = (function () {
     }
   }
 
+  function openNeighboringBlocks(currBlock, e) {
+    // get all neighboring blocks for the current block
+    const currNeighbors = getAllNeighboringBlocks(currBlock);
+    console.log(currNeighbors);
+    const nextNeighbors = [];
+
+    currNeighbors.forEach((block) => {
+      const blockCoords = block.split(',');
+      const blockElement = document.querySelector(`div.block[data-coords="${blockCoords[0]},${blockCoords[1]}"]`);
+      // ignore any that are not empty
+      if (block in allBlocksHash === false || allBlocksHash[block][1] === true) {
+        allBlocksHash[block] = ['empty', true];
+        // if they are empty, add 'clicked' class to them
+        blockElement.classList.add('clicked', 'empty');
+        nextNeighbors.push(block);
+      } else {
+        if (allBlocksHash[block][0] === 'numBlock' && allBlocksHash[block][1] === false) {
+          openCurrBlock(blockElement, block);
+        }
+      }
+    });
+  }
+
   // Function to reset the game to a clean state
   function resetGameHandler() {
     clearInterval(interval);
@@ -203,6 +259,7 @@ const MinesweeperJS = (function () {
     isGameStart = false;
     mineLocations = [];
     numberedBlocksHash = {};
+    allBlocksHash = {};
 
     init();
   }
